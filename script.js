@@ -1,56 +1,93 @@
-var idsCollection = ["#9", "#10", "#11", "#12", "#1", "#2", "#3", "#4",  "#5"];
-var timeSlotCollection = ["09:00:00", "10:00:00", "11:00:00", "12:00:00", "13:00:00",  "14:00:00",  "15:00:00",  "16:00:00",  "17:00:00"];
-var shiftedTimeSlotCollection = ["10:00:00", "11:00:00", "12:00:00", "13:00:00",  "14:00:00",  "15:00:00",  "16:00:00",  "17:00:00",  "18:00:00"];
+let workDay = {
+  "8 AM": "",
+  "9 AM": "",
+  "10 AM": "",
+  "11 AM": "",
+  "12 PM": "",
+  "1 PM": "",
+  "2 PM": "",
+  "3 PM": "",
+  "4 PM": "",
+  "5 PM": "",
+};
 
-var  plannerContent = [];
-var getLocalStorageData = JSON.parse(localStorage.getItem("planner-items"));
+$(document).ready(function(){
+  if(!localStorage.getItem('workDay')) {
+    updateCalendarTasks(workDay);
+  } else {
+    updateCalendarTasks(JSON.parse(localStorage.getItem('workDay')));
+  }
+})
 
-if (getLocalStorageData !== null) {
- plannerContent = getLocalStorageData;
+$('#date-today h6').text(moment().format('dddd') + ", " + moment().format('MMMM Do YYYY, h:mm:ss a'));
+
+let counter = 1;
+for(const property in workDay) {
+  let textEntry = "#text-entry" + counter;
+  $(textEntry).text(workDay[property]);
+  let timeId = "#time" + counter;
+  let presentHour = moment().hour();
+  let timeString = $(timeId).text();
+  let timeNumber = hourNumberFromHourString(timeString);  
+  if(timeNumber < presentHour) {
+    $(textEntry).addClass("past-hour");
+  } else if (timeNumber > presentHour) {
+    $(textEntry).addClass("future-hour");
+  } else {
+    $(textEntry).addClass("present-hour");
+  }
+  counter ++;
 }
 
-for (var i=0;i<idsCollection.length; i++) {
-  var descriptionEl = $(idsCollection[i]);
-  var buttonEl = descriptionEl.parent().parent().find("button");
-
-  if ((moment().format('MMMM Do YYYY, HH:mm:ss')) < (moment().format('MMMM Do YYYY') +  ", " + timeSlotCollection[i])) { 
-    descriptionEl.attr("class", "future");
-    plannerContent.forEach(function(item) {
-      if (idsCollection[i] === ("#" + (item["input-id"]))) {
-        descriptionEl.val(item["input-value"]);
-      }
-    });
-  }
-  else if (((moment().format('MMMM Do YYYY, HH:mm:ss')) >= (moment().format('MMMM Do YYYY') +  ", " + timeSlotCollection[i])) &&  
-          ((moment().format('MMMM Do YYYY, HH:mm:ss')) < (moment().format('MMMM Do YYYY') +  ", " + shiftedTimeSlotCollection[i])))
-  {
-    descriptionEl.attr("class", "present");
-    $(".present").attr("disabled", "disabled");
-    buttonEl.attr("disabled", true);
-    plannerContent.forEach(function(item) {
-      if (idsCollection[i] === ("#" + item["input-id"])) {
-        descriptionEl.val(item["input-value"]);
-      }
-    });
-  }
-  else if ((moment().format('MMMM Do YYYY, HH:mm:ss')) > (moment().format('MMMM Do YYYY') +  ", " + timeSlotCollection[i])) {
-    descriptionEl.attr("class", "past");
-    $(".past").attr("disabled", "disabled");
-    buttonEl.attr("disabled", true);
-  }
-}
-
-$("button").on("click", function() {
-  event.preventDefault();
-  var container = $(this).parent().parent();  
-  var inputValue = container.find("input").val();
-  var inputId = container.find("input").attr("id");
-  var textObj = {
-    "input-id": inputId,
-    "input-value": inputValue };
+$("button").click(function() {
+  value = $(this).siblings("textarea").val();
+  hourString = $(this).siblings("div").text();
   
-  if (textObj["input-value"] !== "") {
-    plannerContent.push(textObj);
-    localStorage.setItem("planner-items", JSON.stringify(plannerContent));
-  }
+  saveSchedule(hourString, value);
 });
+
+function hourNumberFromHourString(hourString) {
+  switch(hourString) {
+    case "8 AM": return 8;
+    case "9 AM": return 9;
+    case "10 AM": return 10;
+    case "11 AM": return 11;
+    case "12 PM": return 12;
+    case "1 PM": return 13;
+    case "2 PM": return 14;
+    case "3 PM": return 15;
+    case "4 PM": return 16;
+    case "5 PM": return 17;
+  }
+}
+
+function loadCorrectDataset() {
+  result = localStorage.getItem('workDay')
+  return (result ? result : workDay);
+}
+
+function initializeLocalStorage() {
+  localStorage.setItem('workDay', JSON.stringify(workDay));
+};
+
+function saveToLocalStorage(dayObj) {
+  localStorage.setItem('workDay', JSON.stringify(dayObj));
+}
+
+function saveSchedule(hourString, val) {
+  if(!localStorage.getItem('workDay')) {
+    initializeLocalStorage();
+  }
+
+  let workHours = JSON.parse(localStorage.getItem('workDay'));
+  workHours[hourString] = val
+
+  saveToLocalStorage(workHours);
+}
+
+function updateCalendarTasks(dayObject) {
+  $(".calendar-row").each(function(index) {
+    let res = $(this).children("div");
+    $(this).children("textarea").text(dayObject[res.text()]);
+  })
+}
