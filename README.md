@@ -1,8 +1,18 @@
-# Work Day Scheduler
+<h1 align="center">🗓️ Work Day Scheduler</h1>
 
-A simple daily planner for a standard 8 AM – 5 PM workday. Type an event into any hour and save it. Your schedule stays put after you refresh the page.
+<p align="center">An hour-by-hour planner for the 8 AM – 5 PM workday, color-coded by past, present and future.</p>
 
-**[Launch Scheduler](https://christiankrantz11.github.io/Scheduler/)**
+<p align="center">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&amp;logo=html5&amp;logoColor=white" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&amp;logo=css&amp;logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&amp;logo=javascript&amp;logoColor=black" alt="JavaScript">
+  <img src="https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&amp;logo=jquery&amp;logoColor=white" alt="jQuery">
+  <img src="https://img.shields.io/badge/Moment.js-222222?style=for-the-badge" alt="Moment.js">
+</p>
+
+<p align="center"><a href="https://christiankrantz11.github.io/Scheduler/"><strong>🚀 Live Demo</strong></a></p>
+
+<p align="center"><img src="docs/screenshot.png" alt="Work Day Scheduler with hourly blocks colored gray for past, red for the current hour and green for future hours" width="850"></p>
 
 ## Features
 
@@ -33,11 +43,16 @@ No build step is needed.
 
 ## User Story
 
+<details>
+<summary>Original assignment user story</summary>
+
 ```
 AS AN employee with a busy schedule
 I WANT to add important events to a daily planner
 SO THAT I can manage my time effectively
 ```
+
+</details>
 
 ## Author
 
