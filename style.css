@@ -1,32 +1,62 @@
-textarea {
-  resize: none;
-}
-
-.past-hour {
-  background-color: rgb(189, 189, 189);
-  border-color: gray;
-}
-
-.present-hour {
-  background-color: crimson;
-  border-color: crimson;
-}
-
-.future-hour {
-  background-color: rgb(90, 177, 90);
-  border-color: rgb(41, 136, 41);
+body {
+  font-family: "Open Sans", sans-serif;
 }
 
 header {
-  border-bottom-width: 10px;
-  color: black;
+  border-bottom: 10px solid #343a40;
 }
 
-button {
-  border-left: 1px solid black;
+.time-block {
+  margin: 0;
+  border-top: 1px solid #fff;
+}
+
+.hour {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  margin: 0;
+  padding: 10px 8px;
+  border-top: 1px dashed #343a40;
+  font-weight: 600;
+}
+
+.description {
+  padding: 10px;
+  border: none;
+  border-left: 1px solid #343a40;
+  resize: none;
+  color: #212529;
+}
+
+.past .description {
+  background-color: #d3d3d3;
+}
+
+.present .description {
+  background-color: #ff6961;
+  color: #fff;
+}
+
+.future .description {
+  background-color: #77dd77;
+}
+
+.save-btn {
+  border: 0;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
-  background-color: #06AED5;
-  color: white;
-  font-size: 1.5em;
+  background-color: #06aed5;
+  color: #fff;
+  font-size: 1.4rem;
+  transition: background-color 0.2s;
+}
+
+.save-btn:hover,
+.save-btn:focus {
+  background-color: #0592b3;
+}
+
+.save-btn.saved {
+  background-color: #28a745;
 }

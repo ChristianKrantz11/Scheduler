@@ -1,93 +1,107 @@
-let workDay = {
-  "8 AM": "",
-  "9 AM": "",
-  "10 AM": "",
-  "11 AM": "",
-  "12 PM": "",
-  "1 PM": "",
-  "2 PM": "",
-  "3 PM": "",
-  "4 PM": "",
-  "5 PM": "",
-};
+var STORAGE_KEY = "workDay";
+var START_HOUR = 8; // 8 AM
+var END_HOUR = 17; // 5 PM
 
-$(document).ready(function(){
-  if(!localStorage.getItem('workDay')) {
-    updateCalendarTasks(workDay);
-  } else {
-    updateCalendarTasks(JSON.parse(localStorage.getItem('workDay')));
-  }
-})
+var timeBlocksEl = document.getElementById("time-blocks");
+var currentDayEl = document.getElementById("current-day");
+var clearButton = document.getElementById("clear-schedule");
 
-$('#date-today h6').text(moment().format('dddd') + ", " + moment().format('MMMM Do YYYY, h:mm:ss a'));
-
-let counter = 1;
-for(const property in workDay) {
-  let textEntry = "#text-entry" + counter;
-  $(textEntry).text(workDay[property]);
-  let timeId = "#time" + counter;
-  let presentHour = moment().hour();
-  let timeString = $(timeId).text();
-  let timeNumber = hourNumberFromHourString(timeString);  
-  if(timeNumber < presentHour) {
-    $(textEntry).addClass("past-hour");
-  } else if (timeNumber > presentHour) {
-    $(textEntry).addClass("future-hour");
-  } else {
-    $(textEntry).addClass("present-hour");
-  }
-  counter ++;
+// "8 AM", "12 PM", "5 PM", ...
+function hourLabel(hour) {
+  var suffix = hour < 12 ? "AM" : "PM";
+  var displayHour = hour % 12 === 0 ? 12 : hour % 12;
+  return displayHour + " " + suffix;
 }
 
-$("button").click(function() {
-  value = $(this).siblings("textarea").val();
-  hourString = $(this).siblings("div").text();
-  
-  saveSchedule(hourString, value);
+function loadSchedule() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveEvent(label, text) {
+  var schedule = loadSchedule();
+  schedule[label] = text;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(schedule));
+}
+
+function buildTimeBlocks() {
+  var schedule = loadSchedule();
+
+  for (var hour = START_HOUR; hour <= END_HOUR; hour++) {
+    var label = hourLabel(hour);
+    var inputId = "event-" + hour;
+
+    var row = document.createElement("div");
+    row.className = "row time-block";
+    row.dataset.hour = hour;
+
+    var time = document.createElement("label");
+    time.className = "col-2 col-md-1 hour";
+    time.htmlFor = inputId;
+    time.textContent = label;
+
+    var textarea = document.createElement("textarea");
+    textarea.className = "col-8 col-md-10 description";
+    textarea.id = inputId;
+    textarea.rows = 3;
+    textarea.value = schedule[label] || "";
+
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "col-2 col-md-1 save-btn";
+    button.setAttribute("aria-label", "Save " + label + " event");
+    button.innerHTML = '<i class="fas fa-save" aria-hidden="true"></i>';
+    button.addEventListener("click", handleSave.bind(null, label, textarea, button));
+
+    row.appendChild(time);
+    row.appendChild(textarea);
+    row.appendChild(button);
+    timeBlocksEl.appendChild(row);
+  }
+}
+
+function handleSave(label, textarea, button) {
+  saveEvent(label, textarea.value.trim());
+  button.classList.add("saved");
+  button.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i>';
+  setTimeout(function () {
+    button.classList.remove("saved");
+    button.innerHTML = '<i class="fas fa-save" aria-hidden="true"></i>';
+  }, 1200);
+}
+
+// Color each block as past, present or future based on the current hour
+function updateBlockColors() {
+  var currentHour = new Date().getHours();
+  var blocks = timeBlocksEl.querySelectorAll(".time-block");
+  blocks.forEach(function (block) {
+    var hour = Number(block.dataset.hour);
+    block.classList.toggle("past", hour < currentHour);
+    block.classList.toggle("present", hour === currentHour);
+    block.classList.toggle("future", hour > currentHour);
+  });
+}
+
+function updateClock() {
+  var now = new Date();
+  currentDayEl.textContent =
+    now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" }) +
+    " · " +
+    now.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  updateBlockColors();
+}
+
+clearButton.addEventListener("click", function () {
+  if (!confirm("Clear every event from today's schedule?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  timeBlocksEl.querySelectorAll("textarea").forEach(function (textarea) {
+    textarea.value = "";
+  });
 });
 
-function hourNumberFromHourString(hourString) {
-  switch(hourString) {
-    case "8 AM": return 8;
-    case "9 AM": return 9;
-    case "10 AM": return 10;
-    case "11 AM": return 11;
-    case "12 PM": return 12;
-    case "1 PM": return 13;
-    case "2 PM": return 14;
-    case "3 PM": return 15;
-    case "4 PM": return 16;
-    case "5 PM": return 17;
-  }
-}
-
-function loadCorrectDataset() {
-  result = localStorage.getItem('workDay')
-  return (result ? result : workDay);
-}
-
-function initializeLocalStorage() {
-  localStorage.setItem('workDay', JSON.stringify(workDay));
-};
-
-function saveToLocalStorage(dayObj) {
-  localStorage.setItem('workDay', JSON.stringify(dayObj));
-}
-
-function saveSchedule(hourString, val) {
-  if(!localStorage.getItem('workDay')) {
-    initializeLocalStorage();
-  }
-
-  let workHours = JSON.parse(localStorage.getItem('workDay'));
-  workHours[hourString] = val
-
-  saveToLocalStorage(workHours);
-}
-
-function updateCalendarTasks(dayObject) {
-  $(".calendar-row").each(function(index) {
-    let res = $(this).children("div");
-    $(this).children("textarea").text(dayObject[res.text()]);
-  })
-}
+buildTimeBlocks();
+updateClock();
+setInterval(updateClock, 30 * 1000);
