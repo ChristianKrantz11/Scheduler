@@ -1,4 +1,4 @@
-<h1 align="center">🗓️ Work Day Scheduler</h1>
+<h1 align="center">Work Day Scheduler</h1>
 
 <p align="center">An hour-by-hour planner for the 8 AM – 5 PM workday, color-coded by past, present and future.</p>
 
@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/Bootstrap-7952B3?style=for-the-badge&amp;logo=bootstrap&amp;logoColor=white" alt="Bootstrap">
 </p>
 
-<p align="center"><a href="https://christiankrantz11.github.io/Scheduler/"><strong>🚀 Live Demo</strong></a></p>
+<p align="center"><a href="https://christiankrantz11.github.io/Scheduler/"><strong>Live Demo</strong></a></p>
 
 <p align="center"><img src="docs/screenshot.png" alt="Work Day Scheduler with hourly blocks colored gray for past, red for the current hour and green for future hours" width="850"></p>
 
@@ -47,19 +47,6 @@ No build step is needed.
 
 The hour rows are generated in JavaScript from a start and end hour, rather than repeated in the HTML. The clock refreshes every 30 seconds and re-colors the blocks, so the page stays accurate if you leave it open all day.
 
-## User Story
-
-<details>
-<summary>Original assignment user story</summary>
-
-```
-AS AN employee with a busy schedule
-I WANT to add important events to a daily planner
-SO THAT I can manage my time effectively
-```
-
-</details>
-
 ## Author
 
-[ChristianKrantz11](https://github.com/ChristianKrantz11)
+**Christian Krantz**: [Portfolio](https://christiankrantz11.github.io/) · [LinkedIn](https://www.linkedin.com/in/christian-krantz-49976b189) · [GitHub](https://github.com/ChristianKrantz11)
